@@ -1,0 +1,43 @@
+group 'com.productiveAnalytics.aws.lambda'
+version '0.0.2-SNAPSHOT'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE'
+    }
+}
+
+apply plugin: 'java'
+//apply plugin: 'application'
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+    imports {
+        mavenBom 'software.amazon.awssdk:bom:2.0.0'
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
+    compile 'com.amazonaws:aws-lambda-java-events:1.2.0'
+    
+    // CloudWatch has V2 api
+    compile 'software.amazon.awssdk:cloudwatch'
+}
+
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources              
+    into('lib') {
+        from configurations.compileClasspath
+    }           
+}
+
+build.dependsOn buildZip
